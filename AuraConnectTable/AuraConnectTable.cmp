@@ -1,0 +1,15 @@
+<aura:component controller="showAuraConnect" implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="connections" type="Aura_Connect__c[]"/>
+    <aura:attribute name="columns" type="List"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card title="Connected Data">
+        <lightning:datatable
+                             keyField="Id"
+                             data="{!v.connections}"
+                             columns="{!v.columns}"                             
+                             hideCheckboxColumn="true"/>
+        
+    </lightning:card>
+</aura:component>

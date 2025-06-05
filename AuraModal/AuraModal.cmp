@@ -1,0 +1,71 @@
+<aura:component controller="AuraConnectController" implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="contacts" type="List"/>
+    <aura:attribute name="accounts" type="List"/>
+    <aura:attribute name="opportunities" type="List"/>
+
+    <aura:attribute name="selectedContactId" type="String"/>
+    <aura:attribute name="selectedContact" type="Contact"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:attribute name="selectedOpportunityId" type="String"/>
+    <aura:attribute name="selectedAccountId" type="String"/>
+
+
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+
+    <lightning:card>
+        <div class="slds-p-around_medium slds-grid slds-grid_align-center">
+            <lightning:button variant="brand" label="Connect" onclick="{!c.openModal}" />
+        </div>
+    </lightning:card>
+
+    <aura:if isTrue="{!v.showModal}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Connect Contacts with Account and Opportunities</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning:select label="Contact" value="{!v.selectedContactId}" onchange="{!c.handleContactChange}">
+                        <aura:iteration items="{!v.contacts}" var="con">
+                            <option value="{!con.Id}">{!con.Name}</option>
+                        </aura:iteration>
+                    </lightning:select>
+
+                    <aura:if isTrue="{!not(empty(v.selectedContact.AccountId))}">
+                        <lightning:input label="Account" value="{!v.selectedContact.Account.Name}" disabled="true"/>
+                        <aura:set attribute="else">
+                            <lightning:select label="Account" value="{!v.selectedAccountId}">
+                                <aura:iteration items="{!v.accounts}" var="acc">
+                                    <option value="{!acc.Id}">{!acc.Name}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </aura:set>
+                    </aura:if>
+
+                    <lightning:select label="Opportunity" value="{!v.selectedOpportunityId}">
+                        <aura:iteration items="{!v.opportunities}" var="opp">
+                            <option value="{!opp.Id}">{!opp.Name}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" label="Cancel" onclick="{!c.closeModal}" />
+                    <lightning:button variant="brand" label="Save" 
+                                      onclick="{!c.saveAuraConnect}" 
+                                      disabled="{!or(
+                                                not(v.selectedContactId), 
+                                                or(
+                                                not(v.selectedOpportunityId), 
+                                                not(
+                                                or(v.selectedContact.AccountId, v.selectedAccountId)
+                                                )
+                                                )
+                                                )}"
+/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>
